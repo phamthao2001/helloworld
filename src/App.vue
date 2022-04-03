@@ -1,18 +1,21 @@
 <template>
   <div id="app">
-    <HelloWorld msg="Hello World"/>
+    <a-layout>
+      <slider-bar />
+      <router-view></router-view>
+    </a-layout>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import SliderBar from "./components/SliderBar.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    SliderBar,
+  },
+};
 </script>
 
 <style>
@@ -20,8 +23,13 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
   text-align: center;
+  justify-content: center;
   color: #2c3e50;
-  margin-top: 60px;
+  /* margin-top: 60px; */
+}
+::-webkit-scrollbar {
+  display: none;
 }
 </style>

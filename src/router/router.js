@@ -1,36 +1,24 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import HelloWorld from './components/HelloWorld'
-import HomePage from './components/HomePage'
-import VietNam from './components/VietNam'
-import Donglao from './components/DongLao'
+import Vue from "vue";
+import VueRouter from "vue-router";
+import HomeCompo from '../components/HomeCompo';
+import CountryCompo from '../components/CountryCompo'
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
-  { 
-    path: '/', 
-    component: HomePage 
+  {
+    path: "/",
+    component: HomeCompo,
   },
-  { 
-    path: '/hello', 
-    component: HelloWorld,
-    children: [
-      {
-        path: 'vietnam',
-        component: VietNam
-      },
-      {
-        path: 'donglao',
-        component: Donglao
-      }
-    ]
+  {
+    path: "/:country",
+    component: CountryCompo,
   }
-]
+];
 
 const router = new VueRouter({
-  mode: 'history',
-  routes
-})
+  mode: "history",
+  routes,
+});
 
 export default router;
