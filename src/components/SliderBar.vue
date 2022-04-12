@@ -22,25 +22,23 @@
       <a-input v-model="text" placeholder="Điền tên nước">
         <i slot="prefix" class="fa-solid fa-globe"></i>
 
-        <a-tooltip slot="suffix" title="Extra information">
+        <a-tooltip slot="suffix" title="Country Hint">
           <i class="fa-solid fa-magnifying-glass"></i>
         </a-tooltip>
       </a-input>
       <span>{{ text }}</span>
       <a-list item-layout="horizontal" :data-source="getdata">
         <a-list-item
+          class="item"
           slot="renderItem"
           slot-scope="item"
           @click="focusCountry(item)"
         >
           <a-list-item-meta>
-            <p slot="title" style="color: white">{{ item }}</p>
+            <p slot="title" style="color: white">{{ item.name }}</p>
             <a-avatar
               slot="avatar"
-              :src="
-                'https://countryflagsapi.com/png/' +
-                item.toLowerCase().replace('-', ' ')
-              "
+              :src="item.flag"
               style="margin-left: 10px"
             />
           </a-list-item-meta>
@@ -48,15 +46,12 @@
       </a-list>
     </div>
     <div v-else style="margin-bottom: 10px">
-      <div v-if="this.$store.state.focusCountry">
+      <div v-if="this.$store.state.focusCountry.name">
         <a-avatar
-          :src="
-            'https://countryflagsapi.com/png/' +
-            this.$store.state.focusCountry.toLowerCase().replace('-', ' ')
-          "
+          :src="this.$store.state.focusCountry.flag"
           style="margin-bottom: 10px"
         />
-        <div style="color: white">{{ this.$store.state.focusCountry }}</div>
+        <div style="color: white">{{ this.$store.state.focusCountry.name }}</div>
       </div>
 
       <div v-else>
@@ -99,7 +94,7 @@ export default {
     getdata() {
       if (this.text.length > 0) {
         return this.$store.state.country.filter(
-          (str) => str.toLowerCase().indexOf(this.text.toLowerCase()) >= 0
+          (obj) => obj.name.toLowerCase().indexOf(this.text.toLowerCase()) >= 0
         );
       } else {
         return this.$store.state.country;
@@ -114,7 +109,7 @@ export default {
       this.$store.commit("setFocusCountry", data);
       this.collapsed = !this.collapsed;
       this.text = "";
-      this.$router.push(`/${this.$store.state.focusCountry}`);
+      this.$router.push(`/${this.$store.state.focusCountry.name}`);
     },
     showDrawer() {
       this.visible = true;
@@ -136,5 +131,9 @@ export default {
   bottom: 40px;
   color: white;
   left: 25px;
+}
+
+li.item {
+  cursor: pointer;
 }
 </style>
