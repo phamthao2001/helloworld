@@ -3,7 +3,7 @@
     v-model="collapsed"
     :trigger="null"
     collapsible
-    style="height: 100vh; overflow: scroll; position: relative"
+    style="height: 100vh; overflow: scroll; position: relative; text-align:center;"
     width="200px"
     collapsedWidth="80px"
   >
@@ -26,7 +26,6 @@
           <i class="fa-solid fa-magnifying-glass"></i>
         </a-tooltip>
       </a-input>
-      <span>{{ text }}</span>
       <a-list item-layout="horizontal" :data-source="getdata">
         <a-list-item
           class="item"
@@ -35,10 +34,10 @@
           @click="focusCountry(item)"
         >
           <a-list-item-meta>
-            <p slot="title" style="color: white">{{ item.name }}</p>
+            <p slot="title" style="color: white">{{ item.nameiso.name }}</p>
             <a-avatar
               slot="avatar"
-              :src="item.flag"
+              :src="`https://countryflagsapi.com/png/${item.nameiso.iso}`"
               style="margin-left: 10px"
             />
           </a-list-item-meta>
@@ -46,12 +45,14 @@
       </a-list>
     </div>
     <div v-else style="margin-bottom: 10px">
-      <div v-if="this.$store.state.focusCountry.name">
+      <div v-if="this.$store.state.focusCountry.nameiso">
         <a-avatar
-          :src="this.$store.state.focusCountry.flag"
+          :src="`https://countryflagsapi.com/png/${this.$store.state.focusCountry.nameiso.iso}`"
           style="margin-bottom: 10px"
         />
-        <div style="color: white">{{ this.$store.state.focusCountry.name }}</div>
+        <div style="color: white">
+          {{ this.$store.state.focusCountry.nameiso.name }}
+        </div>
       </div>
 
       <div v-else>
@@ -59,11 +60,11 @@
           class="fa-solid fa-earth-asia"
           :style="{ color: 'white', fontSize: '25px' }"
         ></i>
-        <div style="color: white; margin-top: 10px">Global Info</div>
+        <div style="color: white; margin-top: 10px">Global</div>
       </div>
     </div>
     <i
-      v-if="collapsed && this.$store.state.focusCountry"
+      v-if="collapsed && this.$store.state.focusCountry.nameiso"
       class="fa-solid fa-file-export export"
       @click="showDrawer"
     ></i>
@@ -72,7 +73,7 @@
       placement="right"
       :closable="false"
       :visible="visible"
-      :after-visible-change="afterVisibleChange"
+      
       @close="onClose"
     >
       <p>PDF</p>
@@ -109,7 +110,7 @@ export default {
       this.$store.commit("setFocusCountry", data);
       this.collapsed = !this.collapsed;
       this.text = "";
-      this.$router.push(`/${this.$store.state.focusCountry.name}`);
+      this.$router.push(`/${this.$store.state.focusCountry.nameiso.name}`);
     },
     showDrawer() {
       this.visible = true;
@@ -135,5 +136,8 @@ export default {
 
 li.item {
   cursor: pointer;
+}
+::-webkit-scrollbar {
+  display: none;
 }
 </style>

@@ -24,12 +24,10 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100vh;
-  text-align: center;
   justify-content: center;
   color: #2c3e50;
-  /* margin-top: 60px; */
 }
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   display: none;
-}
+} */
 </style>

@@ -12,6 +12,11 @@ export default {
       this.$router.push("/");
       this.$store.commit("setFocusCountry","");
     }
+  },
+  created: function(){
+    // if(this.$router.params.country){
+      
+    // }
   }
 };
 </script>

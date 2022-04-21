@@ -8,52 +8,125 @@ const store = new Vuex.Store({
   state: {
     country: [],
     focusCountry: {},
+    globalInfo: [],
+  },
+  getters: {
+    computeTotalCase(state) {
+      var total = 0;
+      state.globalInfo.forEach((item) => (total += item.cases));
+      return total;
+    },
+    computeNewCase(state) {
+      var total = 0;
+      state.globalInfo.forEach((item) => (total += item.todayCases));
+      return total;
+    },
+    getDataAllCountry(state) {
+      return state.country;
+    },
+    getDataCase(state) {
+      var data = [];
+      state.globalInfo.forEach((item) => {
+        data.push({
+          name: item.continent,
+          total: item.cases,
+          today: item.todayCases,
+        });
+      });
+      return data;
+    },
+    getDataDeath(state) {
+      var data = [];
+      state.globalInfo.forEach((item) => {
+        data.push({
+          name: item.continent,
+          total: item.deaths,
+          today: item.todayDeaths,
+        });
+      });
+      return data;
+    },
+    getDataRecover(state) {
+      var data = [];
+      state.globalInfo.forEach((item) => {
+        data.push({
+          name: item.continent,
+          total: item.recovered,
+          today: item.todayRecovered,
+        });
+      });
+      return data;
+    },
+    getDataTest(state) {
+      var data = [];
+      state.globalInfo.forEach((item) => {
+        data.push({
+          name: item.continent,
+          total: item.tests,
+          today: item.population,
+        });
+      });
+      return data;
+    },
   },
   mutations: {
-    setCountry(state, payload) {
-      state.country = payload;
-    },
     setFocusCountry(state, payload) {
       state.focusCountry = payload;
     },
-    addCountry(state, payload){
+    addCountry(state, payload) {
       state.country.push(payload);
-    }
+    },
+    setGlobalInfo(state, payload) {
+      state.globalInfo = payload;
+    },
   },
   actions: {
-    async getCountry({ commit }) {
+    async getCountry({ commit, state }) {
+      if (state.country.length !== 0) {
+        return;
+      }
       var config = {
-        method: 'get',
-        url: 'https://corona.lmao.ninja/v2/countries?yesterday&sort',
-        headers: { }
+        method: "get",
+        url: "https://corona.lmao.ninja/v2/countries?yesterday&sort",
+        headers: {},
       };
-      // const options = {
-      //   method: "GET",
-      //   url: "https://covid-193.p.rapidapi.com/countries",
-      //   headers: {
-      //     "X-RapidAPI-Host": "covid-193.p.rapidapi.com",
-      //     "X-RapidAPI-Key":
-      //       "b1fe5ba941mshb642dcd2bad7be2p141b4djsndf4f80069002",
-      //   },
-      // };
+      var key=1;
       try {
-        // const res = await axios.request(options);
-        const res= await axios.request(config);
+        const res = await axios.request(config);
         console.log(res.data);
-        const data= res.data;
-        data.forEach(item => {
-          const payload={
-            name: item.country,
-            flag: item.countryInfo.flag
-          }
-          commit("addCountry",payload)
+        const data = res.data;
+        data.forEach((item) => {
+          const payload = {
+            key: key++,
+            nameiso: {
+              name: item.country,
+              iso: item.countryInfo.iso2,
+            },
+            flag: item.countryInfo.flag,
+            continent: item.continent,
+            cases: item.cases,
+            deaths: item.deaths,
+            recovered: item.recovered,
+            tests: item.tests,
+            population: item.population,
+          };
+          commit("addCountry", payload);
         });
-        
-        // console.log(res.data.response);
-        // const payload = res.data.response;
-        // commit("setCountry", payload);
       } catch (error) {
         console(error);
+      }
+    },
+    async getGlobalInfo({ commit }) {
+      var config = {
+        method: "get",
+        url: "https://corona.lmao.ninja/v2/continents?yesterday&sort",
+        headers: {},
+      };
+      try {
+        const res = await axios(config);
+        commit("setGlobalInfo", res.data);
+      } catch (error) {
+        console.log(error);
       }
     },
   },
