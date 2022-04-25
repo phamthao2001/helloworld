@@ -7,7 +7,7 @@
       box-shadow: 0px 9px 27px -2px rgba(92, 87, 87, 0.76);
       -webkit-box-shadow: 0px 9px 27px -2px rgba(92, 87, 87, 0.76);
       -moz-box-shadow: 0px 9px 27px -2px rgba(92, 87, 87, 0.76);
-      margin-bottom:15px;
+      margin-bottom: 15px;
     "
   >
     <a-card class="card">
@@ -15,7 +15,8 @@
         <i :class="iconClass" style="font-size: 20px; margin-right: 10px"></i>
         <span>{{ maintitle }}</span>
       </div>
-      <a-popover slot="extra" placement="bottom">
+
+      <a-popover v-if="data" slot="extra" placement="bottom">
         <div slot="content">
           <highcharts :options="getChartOptions()"></highcharts>
         </div>
@@ -24,17 +25,28 @@
           style="color: white; font-size: 15px"
         ></i>
       </a-popover>
+      <a-popover v-if="historydata" slot="extra" placement="bottom">
+        <div slot="content">
+          <highcharts :options="getChartOptionsCountry()"></highcharts>
+        </div>
+        <span style="color: green; font-size:17px">
+          <i class="fa-solid fa-angle-up"></i>
+          {{getRatio() +" %"}}
+        </span>
+      </a-popover>
+
       <div style="font-size: 16px">
         <i
           class="fa-solid fa-user"
           style="font-size: 20px; margin-right: 10px"
         ></i>
         <span>
-          {{ getTotal().toLocaleString() }}
+          {{ getTotal() ? getTotal().toLocaleString() : getTotal() }}
         </span>
       </div>
       <div style="font-size: 11px; margin-top: 5px">
-        {{ subtitle + ": " + getNew().toLocaleString() }}
+        {{ subtitle + ": " }}
+        {{ getNew() ? getNew().toLocaleString() : getNew() }}
       </div>
     </a-card>
   </a-col>
@@ -44,7 +56,14 @@
 import { Chart } from "highcharts-vue";
 
 export default {
-  props: ["maintitle", "iconClass", "subtitle", "data"],
+  props: [
+    "maintitle",
+    "iconClass",
+    "subtitle",
+    "data",
+    "countrydata",
+    "historydata",
+  ],
   components: {
     highcharts: Chart,
   },
@@ -54,13 +73,30 @@ export default {
   methods: {
     getTotal() {
       var total = 0;
-      this.data.forEach((item) => (total += item.total));
+      this.data
+        ? this.data.forEach((item) => (total += item.total))
+        : (total = this.countrydata.total);
       return total;
     },
     getNew() {
       var today = 0;
-      this.data.forEach((item) => (today += item.today));
+      if (this.data) {
+        this.data.forEach((item) => (today += item.today));
+      } else {
+        var his = this.historydata ? Object.values(this.historydata) : [];
+        his.length === 2 && (his[1] !== 0) & (his[2] != 0)
+          ? (today = his[1] - his[0])
+          : (today = this.countrydata.new);
+      }
       return today;
+    },
+    getRatio(){
+      var his = this.historydata ? Object.values(this.historydata) : [];
+      if(his.length===2){
+        return (((his[1]-his[0])*100)/(his[0]+1)).toFixed(3)
+      }else{
+        return 0
+      }
     },
     getCategories() {
       var categories = [];
@@ -123,6 +159,53 @@ export default {
           {
             name: this.subtitle,
             data: this.getArrNew(),
+          },
+        ],
+      };
+      return obj;
+    },
+    getChartOptionsCountry() {
+      const obj = {
+        chart: {
+          type: "column",
+        },
+        title: {
+          text: `Detail Information ${this.maintitle}`,
+        },
+        subtitle: {
+          text: "Source: NovelCOVID API",
+        },
+        xAxis: {
+          categories: this.historydata ? Object.keys(this.historydata) : [],
+          crosshair: true,
+        },
+        yAxis: {
+          min: 0,
+          title: {
+            text: "Case (person)",
+          },
+        },
+        tooltip: {
+          headerFormat:
+            '<span style="font-size:10px">{point.key}</span><table>',
+          pointFormat:
+            '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b>{point.y} cases</b></td></tr>',
+          footerFormat: "</table>",
+          shared: true,
+          useHTML: true,
+        },
+        plotOptions: {
+          column: {
+            pointPadding: 0.2,
+            borderWidth: 0,
+          },
+        },
+        credits: false,
+        series: [
+          {
+            name: this.maintitle,
+            data: this.historydata ? Object.values(this.historydata) : [],
           },
         ],
       };

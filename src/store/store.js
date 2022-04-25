@@ -9,6 +9,8 @@ const store = new Vuex.Store({
     country: [],
     focusCountry: {},
     globalInfo: [],
+    vietnamInfo: {},
+    vietnamHistory: {},
   },
   getters: {
     computeTotalCase(state) {
@@ -68,6 +70,43 @@ const store = new Vuex.Store({
       });
       return data;
     },
+    getVietnamCase(state) {
+      var data = {
+        total: state.vietnamInfo.cases,
+        new: state.vietnamInfo.todayCases,
+      };
+      return data;
+    },
+    getVietnamDeath(state) {
+      var data = {
+        total: state.vietnamInfo.deaths,
+        new: state.vietnamInfo.todayDeaths,
+      };
+      return data;
+    },
+    getVietnamRecover(state) {
+      var data = {
+        total: state.vietnamInfo.recovered,
+        new: state.vietnamInfo.todayRecovered,
+      };
+      return data;
+    },
+    getVietnamTest(state) {
+      var data = {
+        total: state.vietnamInfo.tests,
+        new: state.vietnamInfo.population,
+      };
+      return data;
+    },
+    getVietnamHistoryCase(state) {
+      return state.vietnamHistory.cases;
+    },
+    getVietnamHistoryDeath(state) {
+      return state.vietnamHistory.deaths;
+    },
+    getVietnamHistoryRecover(state) {
+      return state.vietnamHistory.recovered;
+    },
   },
   mutations: {
     setFocusCountry(state, payload) {
@@ -78,6 +117,12 @@ const store = new Vuex.Store({
     },
     setGlobalInfo(state, payload) {
       state.globalInfo = payload;
+    },
+    setVietnamInfo(state, payload) {
+      state.vietnamInfo = payload;
+    },
+    setVietnamHistory(state, payload) {
+      state.vietnamHistory = payload;
     },
   },
   actions: {
@@ -90,10 +135,9 @@ const store = new Vuex.Store({
         url: "https://corona.lmao.ninja/v2/countries?yesterday&sort",
         headers: {},
       };
-      var key=1;
+      var key = 1;
       try {
         const res = await axios.request(config);
-        console.log(res.data);
         const data = res.data;
         data.forEach((item) => {
           const payload = {
@@ -127,6 +171,32 @@ const store = new Vuex.Store({
         commit("setGlobalInfo", res.data);
       } catch (error) {
         console.log(error);
+      }
+    },
+    async getVietnamInfo({ commit }) {
+      var config = {
+        method: "get",
+        url: "https://disease.sh/v3/covid-19/countries/Vietnam?yesterday=true&strict=true",
+        headers: {},
+      };
+      try {
+        const res = await axios(config);
+        commit("setVietnamInfo", res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async getVietnamHistory({ commit }) {
+      var config = {
+        method: "get",
+        url: "https://disease.sh/v3/covid-19/historical/vietnam?lastdays=2",
+        headers: {},
+      };
+      try {
+        const res = await axios(config);
+        commit("setVietnamHistory", res.data.timeline);
+      } catch (err) {
+        console.log(err);
       }
     },
   },
