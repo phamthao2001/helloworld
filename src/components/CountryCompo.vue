@@ -20,7 +20,7 @@
               style="
                 padding-left: 15px;
                 letter-spacing: 3px;
-                font-size: 30px;
+                font-size: 40px;
                 font-weight: 550;
                 background: -webkit-linear-gradient(#333, #eee);
                 -webkit-background-clip: text;
@@ -417,6 +417,7 @@ export default {
       };
       return obj;
     },
+    
   },
   beforeCreate: async function () {
     var config = {
