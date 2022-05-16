@@ -3,7 +3,12 @@
     v-model="collapsed"
     :trigger="null"
     collapsible
-    style="height: 100vh; overflow: scroll; position: relative; text-align:center;"
+    style="
+      height: 100vh;
+      overflow: scroll;
+      position: relative;
+      text-align: center;
+    "
     width="200px"
     collapsedWidth="80px"
   >
@@ -53,6 +58,18 @@
         <div style="color: white">
           {{ this.$store.state.focusCountry.nameiso.name }}
         </div>
+        <i
+        class="fa-solid fa-house-user"
+        style="
+          font-size: 25px;
+          bottom: 40px;
+          color: white;
+          left: 25px;
+          margin-top: 15px;
+          cursor: pointer;
+        "
+        @click="homeback"
+      ></i>
       </div>
 
       <div v-else>
@@ -73,7 +90,6 @@
       placement="right"
       :closable="false"
       :visible="visible"
-      
       @close="onClose"
     >
       <p>PDF</p>
@@ -95,7 +111,8 @@ export default {
     getdata() {
       if (this.text.length > 0) {
         return this.$store.state.country.filter(
-          (obj) => obj.name.toLowerCase().indexOf(this.text.toLowerCase()) >= 0
+          (obj) =>
+            obj.nameiso.name.toLowerCase().indexOf(this.text.toLowerCase()) >= 0
         );
       } else {
         return this.$store.state.country;
@@ -103,6 +120,10 @@ export default {
     },
   },
   methods: {
+    homeback() {
+      this.$router.push("/");
+      this.$store.commit("setFocusCountry", {});
+    },
     toggleCollapsed() {
       this.collapsed = !this.collapsed;
     },
@@ -119,7 +140,7 @@ export default {
       this.visible = false;
     },
   },
-  created: function () {
+  created: async function () {
     this.$store.dispatch("getCountry");
   },
 };

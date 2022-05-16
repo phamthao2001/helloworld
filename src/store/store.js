@@ -137,14 +137,14 @@ const store = new Vuex.Store({
       };
       var key = 1;
       try {
-        const res = await axios.request(config);
+        const res = await axios(config);
         const data = res.data;
         data.forEach((item) => {
           const payload = {
             key: key++,
             nameiso: {
               name: item.country,
-              iso: item.countryInfo.iso2,
+              iso: item.countryInfo.iso3,
             },
             flag: item.countryInfo.flag,
             continent: item.continent,

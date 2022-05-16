@@ -93,7 +93,7 @@ export default {
     getRatio(){
       var his = this.historydata ? Object.values(this.historydata) : [];
       if(his.length===2){
-        return (((his[1]-his[0])*100)/(his[0]+1)).toFixed(3)
+        return (((this.getNew())*100)/(this.getTotal()+1)).toFixed(3)
       }else{
         return 0
       }

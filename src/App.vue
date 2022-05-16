@@ -2,7 +2,7 @@
   <div id="app">
     <a-layout>
       <slider-bar />
-      <router-view></router-view>
+      <router-view :key="$route.fullPath"></router-view>
     </a-layout>
   </div>
 </template>
