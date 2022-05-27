@@ -46,6 +46,18 @@
         </a-row>
       </a-col>
     </a-row>
+    <!-- sheet data continent -->
+
+    <a-row type="flex" justify="center" style="margin-top: 15px">
+      <a-col span="22" style="background: rgba(255, 255, 255, 0.659)">
+        <a-tabs default-active-key="1">
+          <a-tab-pane key="1" tab="Total">
+            <highcharts :options="totalChart()"></highcharts>
+          </a-tab-pane>
+          <a-tab-pane key="2" tab="Today"> <highcharts :options="todayChart()"></highcharts> </a-tab-pane>
+        </a-tabs>
+      </a-col>
+    </a-row>
 
     <!-- data vietnam -->
 
@@ -53,10 +65,12 @@
       <a-col>
         <a-row type="flex" justify="center">
           <span style="font-size: 25px; margin-bottom: 10px"
-            >Vietnam <a-avatar
-                :src="`https://disease.sh/assets/img/flags/vn.png`"
-                style="margin-bottom: 10px"
-              /> Information Covid-19
+            >Vietnam
+            <a-avatar
+              :src="`https://disease.sh/assets/img/flags/vn.png`"
+              style="margin-bottom: 10px"
+            />
+            Information Covid-19
           </span>
         </a-row>
         <a-row type="flex" justify="center">
@@ -103,11 +117,6 @@
     <!-- table data global -->
 
     <a-row type="flex" justify="center" style="margin-top: 15px">
-      <div>
-
-      </div>
-    </a-row>
-    <a-row type="flex" justify="center" style="margin-top: 15px">
       <a-col :span="22">
         <a-table
           :columns="columns"
@@ -132,9 +141,10 @@
 
 <script>
 import AnInfo from "./AnInfo.vue";
+import { Chart } from "highcharts-vue";
 
 export default {
-  components: { AnInfo },
+  components: { AnInfo, highcharts: Chart },
   data() {
     return {
       columns: [
@@ -198,6 +208,216 @@ export default {
     };
   },
   methods: {
+    totalChart() {
+      var obj = {
+        chart: {
+          type: "column",
+        },
+        title: {
+          text: '',
+        },
+        xAxis: {
+          categories: this.$store.getters.getCate,
+          crosshair: true,
+        },
+        yAxis: [
+          {
+            min: 0,
+            title: {
+              text: "Case (person)",
+              style: {
+                color: "black",
+              },
+            },
+            labels: {
+              formatter: function () {
+                return this.value / 1000000 + "M";
+              },
+              style: {
+                color: "black",
+              },
+            },
+          },
+          {
+            min: 0,
+            title: {
+              text: "Death (person)",
+              style: {
+                color: "red",
+              },
+            },
+            labels: {
+              formatter: function () {
+                return this.value / 1000000 + "M";
+              },
+              style: {
+                color: "red",
+              },
+            },
+          },
+          {
+            min: 0,
+            title: {
+              text: "Test (person)",
+              style: {
+                color: "gray",
+              },
+            },
+             labels: {
+              formatter: function () {
+                return this.value / 1000000000 + "B";
+              },
+              style: {
+                color: "gray",
+              },
+            },
+            opposite: true,
+          },
+        ],
+        tooltip: {
+          headerFormat:
+            '<span style="font-size:10px">{point.key}</span><table>',
+          pointFormat:
+            '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b>{point.y} cases</b></td></tr>',
+          footerFormat: "</table>",
+          shared: true,
+          useHTML: true,
+        },
+        plotOptions: {
+          column: {
+            pointPadding: 0.2,
+            borderWidth: 0,
+          },
+        },
+        credits: false,
+        series: [
+          {
+            name: "Cases",
+            yAxis: 0,
+            color:"yellow",
+            data: this.$store.getters.getDataCaseTotal,
+          },
+          {
+            name: "Death",
+            yAxis: 1,
+            color:"red",
+            data: this.$store.getters.getDataDeathTotal,
+          },
+          {
+            name: "Recovered",
+            yAxis: 0,
+            color:"green",
+            data: this.$store.getters.getDataRecoverTotal,
+          },
+          {
+            name: "Test",
+            yAxis: 2,
+            color:"gray",
+            data: this.$store.getters.getDataTestTotal,
+          },
+        ],
+      };
+      return obj;
+    },
+    todayChart() {
+      var obj = {
+        chart: {
+          type: "column",
+        },
+        title: {
+          text: '',
+        },
+        xAxis: {
+          categories: this.$store.getters.getCate,
+          crosshair: true,
+        },
+        yAxis: [
+          {
+            min: 0,
+            title: {
+              text: "Case (person)",
+              style: {
+                color: "black",
+              },
+            },
+            labels: {
+              style: {
+                color: "black",
+              },
+            },
+          },
+          {
+            min: 0,
+            title: {
+              text: "Death (person)",
+              style: {
+                color: "red",
+              },
+            },
+            labels: {
+              style: {
+                color: "red",
+              },
+            },
+            opposite: true,
+          },
+          {
+            min: 0,
+            title: {
+              text: "Recovered (person)",
+              style: {
+                color: "gray",
+              },
+            },
+             labels: {
+              style: {
+                color: "gray",
+              },
+            },
+            opposite: true,
+          },
+        ],
+        tooltip: {
+          headerFormat:
+            '<span style="font-size:10px">{point.key}</span><table>',
+          pointFormat:
+            '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b>{point.y} cases</b></td></tr>',
+          footerFormat: "</table>",
+          shared: true,
+          useHTML: true,
+        },
+        plotOptions: {
+          column: {
+            pointPadding: 0.2,
+            borderWidth: 0,
+          },
+        },
+        credits: false,
+        series: [
+          {
+            name: "Cases",
+            yAxis: 0,
+            color:"black",
+            data: this.$store.getters.getDataCaseToday,
+          },
+          {
+            name: "Death",
+            yAxis: 1,
+            color:"red",
+            data: this.$store.getters.getDataDeathToday,
+          },
+          {
+            name: "Recovered",
+            yAxis: 2,
+            color:"gray",
+            data: this.$store.getters.getDataRecoverToday,
+          },
+        ],
+      };
+      return obj;
+    },
     getDataCase() {
       return this.$store.getters.getDataCase;
     },
@@ -236,6 +456,7 @@ export default {
     this.$store.dispatch("getGlobalInfo");
     this.$store.dispatch("getVietnamInfo");
     this.$store.dispatch("getVietnamHistory");
+    this.$store.commit("setFocusCountry",{});
   },
 };
 </script>

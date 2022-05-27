@@ -11,6 +11,9 @@ const store = new Vuex.Store({
     globalInfo: [],
     vietnamInfo: {},
     vietnamHistory: {},
+    historyApp: [],
+    historyCaseFocusCountry: {},
+    historyDeathFocusCountry: {},
   },
   getters: {
     computeTotalCase(state) {
@@ -26,6 +29,11 @@ const store = new Vuex.Store({
     getDataAllCountry(state) {
       return state.country;
     },
+    getCate(state) {
+      var arr = [];
+      state.globalInfo.forEach((item) => arr.push(item.continent));
+      return arr;
+    },
     getDataCase(state) {
       var data = [];
       state.globalInfo.forEach((item) => {
@@ -36,6 +44,16 @@ const store = new Vuex.Store({
         });
       });
       return data;
+    },
+    getDataCaseTotal(state) {
+      var arr = [];
+      state.globalInfo.forEach((item) => arr.push(item.cases));
+      return arr;
+    },
+    getDataCaseToday(state) {
+      var arr = [];
+      state.globalInfo.forEach((item) => arr.push(item.todayCases));
+      return arr;
     },
     getDataDeath(state) {
       var data = [];
@@ -48,6 +66,16 @@ const store = new Vuex.Store({
       });
       return data;
     },
+    getDataDeathTotal(state) {
+      var arr = [];
+      state.globalInfo.forEach((item) => arr.push(item.deaths));
+      return arr;
+    },
+    getDataDeathToday(state) {
+      var arr = [];
+      state.globalInfo.forEach((item) => arr.push(item.todayDeaths));
+      return arr;
+    },
     getDataRecover(state) {
       var data = [];
       state.globalInfo.forEach((item) => {
@@ -59,6 +87,16 @@ const store = new Vuex.Store({
       });
       return data;
     },
+    getDataRecoverTotal(state) {
+      var arr = [];
+      state.globalInfo.forEach((item) => arr.push(item.recovered));
+      return arr;
+    },
+    getDataRecoverToday(state) {
+      var arr = [];
+      state.globalInfo.forEach((item) => arr.push(item.todayRecovered));
+      return arr;
+    },
     getDataTest(state) {
       var data = [];
       state.globalInfo.forEach((item) => {
@@ -69,6 +107,11 @@ const store = new Vuex.Store({
         });
       });
       return data;
+    },
+    getDataTestTotal(state) {
+      var arr = [];
+      state.globalInfo.forEach((item) => arr.push(item.tests));
+      return arr;
     },
     getVietnamCase(state) {
       var data = {
@@ -107,6 +150,47 @@ const store = new Vuex.Store({
     getVietnamHistoryRecover(state) {
       return state.vietnamHistory.recovered;
     },
+    getHistoryApp(state) {
+      return state.historyApp;
+    },
+    getFocusCountryData(state) {
+      var data = [
+        ["Tên quốc gia", state.focusCountry.nameiso.name],
+        ["Kinh độ", state.focusCountry.long],
+        ["Vỹ độ", state.focusCountry.lat],
+        ["Châu lục", state.focusCountry.continent],
+        ["Số ca nhiễm", state.focusCountry.cases],
+        ["Số ca nhiễm hôm nay", state.focusCountry.todayCases],
+        ["Số ca tích cực", state.focusCountry.active],
+        ["Số ca tiêu cực", state.focusCountry.critical],
+        ["Số ca tử vong", state.focusCountry.deaths],
+        ["Số ca tử vong hôm nay", state.focusCountry.todayDeaths],
+        ["Số ca hồi phục", state.focusCountry.recovered],
+        ["Số ca hổi phục hôm nay", state.focusCountry.todayrecovered],
+        ["Số trường hợp test", state.focusCountry.tests],
+      ];
+      return data;
+    },
+    getHisCase(state) {
+      const keys = Object.keys(state.historyCaseFocusCountry);
+      const values = Object.values(state.historyCaseFocusCountry);
+      const length = keys.length;
+      var data = [["Ngày", "Số ca nhiễm"]];
+      for (var i = 0; i < length; i++) {
+        data.push([keys[i], values[i]]);
+      }
+      return data;
+    },
+    getHisDeath(state) {
+      const keys = Object.keys(state.historyDeathFocusCountry);
+      const values = Object.values(state.historyDeathFocusCountry);
+      const length = keys.length;
+      var data = [["Ngày", "Số ca tử vong"]];
+      for (var i = 0; i < length; i++) {
+        data.push([keys[i], values[i]]);
+      }
+      return data;
+    },
   },
   mutations: {
     setFocusCountry(state, payload) {
@@ -123,6 +207,24 @@ const store = new Vuex.Store({
     },
     setVietnamHistory(state, payload) {
       state.vietnamHistory = payload;
+    },
+    addHistoryApp(state, payload) {
+      if (state.historyApp.length === 0) state.historyApp.push(payload);
+      else {
+        if (state.historyApp.at(-1) !== payload) {
+          if (state.historyApp.length < 10) state.historyApp.push(payload);
+          else {
+            state.historyApp.shift();
+            state.historyApp.push(payload);
+          }
+        }
+      }
+    },
+    setHistoryCaseFocusCountry(state, payload) {
+      state.historyCaseFocusCountry = payload;
+    },
+    setHistoryDeathFocusCountry(state, payload) {
+      state.historyDeathFocusCountry = payload;
     },
   },
   actions: {

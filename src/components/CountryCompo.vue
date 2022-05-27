@@ -5,7 +5,7 @@
       size="large"
       style="margin-left: 50%; margin-top: 20px"
     />
-    <div class="content" v-else>
+    <div id="content" v-else>
       <a-row type="flex" justify="center" style="margin-top: 10px">
         <a-col
           span="23"
@@ -227,10 +227,110 @@
       </a-row>
       <a-row type="flex" justify="space-around">
         <a-col :xl="10" md="22" style="margin-top: 15px; margin-bottom: 10px">
-          <highcharts :options="pieChart()"></highcharts>
+          <a-row type="flex" style="background: rgb(201, 254, 250)">
+            <a-col :span="10">
+              <a-row style="color: black; margin-top: 10px"> </a-row>
+            </a-col>
+            <a-col :span="14">
+              <a-row
+                type="flex"
+                justify="space-around"
+                style="margin-top: 10px"
+              >
+                <a-button
+                  :type="historyday == 7 ? 'primary' : ''"
+                  style="width: 18%"
+                  :loading="historyday == 7 && loadingcase"
+                  @click="setHistoryDay(7)"
+                  >1 week</a-button
+                >
+                <a-button
+                  :type="historyday == 30 ? 'primary' : ''"
+                  style="width: 18%"
+                  :loading="historyday == 30 && loadingcase"
+                  @click="setHistoryDay(30)"
+                  >1 month</a-button
+                >
+                <a-button
+                  :type="historyday == 90 ? 'primary' : ''"
+                  style="width: 18%"
+                  :loading="historyday == 90 && loadingcase"
+                  @click="setHistoryDay(90)"
+                  >3 months</a-button
+                >
+                <a-button
+                  :type="historyday == 180 ? 'primary' : ''"
+                  style="width: 18%"
+                  :loading="historyday == 180 && loadingcase"
+                  @click="setHistoryDay(180)"
+                  >6 months</a-button
+                >
+                <a-button
+                  :type="historyday == 365 ? 'primary' : ''"
+                  style="width: 18%"
+                  :loading="historyday == 365 && loadingcase"
+                  @click="setHistoryDay(365)"
+                  >1 year</a-button
+                >
+              </a-row>
+            </a-col>
+          </a-row>
+          <a-row>
+            <highcharts :options="hisCaseChart"></highcharts>
+          </a-row>
         </a-col>
         <a-col :xl="10" md="22" style="margin-top: 15px; margin-bottom: 10px">
-          <highcharts :options="totalAndToday()"></highcharts>
+          <a-row type="flex" style="background: rgb(201, 254, 250)">
+            <a-col :span="10">
+              <a-row style="margin-top: 10px"> </a-row>
+            </a-col>
+            <a-col :span="14">
+              <a-row
+                type="flex"
+                justify="space-around"
+                style="margin-top: 10px"
+              >
+                <a-button
+                  :type="historyday1 == 7 ? 'primary' : ''"
+                  style="width: 18%"
+                  :loading="historyday1 == 7 && loadingdeath"
+                  @click="setHistoryDay1(7)"
+                  >1 week</a-button
+                >
+                <a-button
+                  :type="historyday1 == 30 ? 'primary' : ''"
+                  style="width: 18%"
+                  :loading="historyday1 == 30 && loadingdeath"
+                  @click="setHistoryDay1(30)"
+                  >1 month</a-button
+                >
+                <a-button
+                  :type="historyday1 == 90 ? 'primary' : ''"
+                  style="width: 18%"
+                  :loading="historyday1 == 90 && loadingdeath"
+                  @click="setHistoryDay1(90)"
+                  >3 months</a-button
+                >
+                <a-button
+                  :type="historyday1 == 180 ? 'primary' : ''"
+                  style="width: 18%"
+                  :loading="historyday1 == 180 && loadingdeath"
+                  @click="setHistoryDay1(180)"
+                  >6 months</a-button
+                >
+                <a-button
+                  :type="historyday1 == 365 ? 'primary' : ''"
+                  style="width: 18%"
+                  :loading="historyday1 == 365 && loadingdeath"
+                  @click="setHistoryDay1(365)"
+                  >1 year</a-button
+                >
+              </a-row>
+            </a-col>
+          </a-row>
+          <a-row>
+            <highcharts :options="hisDeathChart"></highcharts>
+          </a-row>
         </a-col>
       </a-row>
     </div>
@@ -247,9 +347,193 @@ export default {
   data() {
     return {
       loading: true,
+      loadingcase: false,
+      loadingdeath: false,
       more: false,
       info: {},
+      historyday: 7,
+      historyday1: 7,
+      hisCase: {},
+      hisDeath: {},
     };
+  },
+  watch: {
+    historyday: async function () {
+      var config = {
+        method: "get",
+        url:
+          "https://corona.lmao.ninja/v2/historical/" +
+          this.$route.params.country +
+          "?lastdays=" +
+          this.historyday,
+        headers: {},
+      };
+      try {
+        const res = await axios(config);
+        this.hisCase = res.data.timeline.cases;
+        this.$store.commit(
+          "setHistoryCaseFocusCountry",
+          res.data.timeline.cases
+        );
+        this.loadingcase = false;
+      } catch (error) {
+        alert(error);
+      }
+    },
+    historyday1: async function () {
+      var config = {
+        method: "get",
+        url:
+          "https://corona.lmao.ninja/v2/historical/" +
+          this.$route.params.country +
+          "?lastdays=" +
+          this.historyday1,
+        headers: {},
+      };
+      try {
+        const res = await axios(config);
+        this.hisDeath = res.data.timeline.deaths;
+        this.$store.commit(
+          "setHistoryDeathFocusCountry",
+          res.data.timeline.deaths
+        );
+        this.loadingdeath = false;
+      } catch (error) {
+        alert(error);
+      }
+    },
+  },
+  computed: {
+    hisCaseChart: function () {
+      var obj = {
+        chart: {
+          backgroundColor: "rgb(201, 254, 250)",
+          plotBorderWidth: null,
+          plotShadow: false,
+          height: 75 + "%",
+          type: "area",
+        },
+        title: {
+          text: "History Cases In Country",
+        },
+        subtitle: {
+          text:
+            'Sources: <a href="https://documenter.getpostman.com/view/11144369/Szf6Z9B3?version=latest#ec0c31aa-b666-4603-8d35-900932206384">' +
+            "https://disease.sh/docs</a>",
+        },
+        xAxis: {
+          categories: this.hisCase ? Object.keys(this.hisCase) : [],
+          allowDecimals: false,
+          labels: {
+            formatter: function () {
+              return this.value; // clean, unformatted number for year
+            },
+          },
+        },
+        yAxis: {
+          min: Object.values(this.hisCase).at(0),
+          title: {
+            text: "Cases(person)",
+          },
+          labels: {
+            formatter: function () {
+              return this.value / 1000 + "k";
+            },
+          },
+        },
+        tooltip: {
+          pointFormat: "{point.y:,.0f} cases",
+        },
+        plotOptions: {
+          area: {
+            marker: {
+              enabled: false,
+              symbol: "circle",
+              radius: 2,
+              states: {
+                hover: {
+                  enabled: true,
+                },
+              },
+            },
+          },
+        },
+        credits: false,
+        series: [
+          {
+            showInLegend: false,
+            data: this.hisCase ? Object.values(this.hisCase) : [],
+            color: "rgb(5, 197, 133)",
+          },
+        ],
+      };
+      return obj;
+    },
+    hisDeathChart: function () {
+      var obj = {
+        chart: {
+          backgroundColor: "rgb(201, 254, 250)",
+          plotBorderWidth: null,
+          plotShadow: false,
+          height: 75 + "%",
+          type: "area",
+        },
+        title: {
+          text: "History Deaths In Country",
+        },
+        subtitle: {
+          text:
+            'Sources: <a href="https://documenter.getpostman.com/view/11144369/Szf6Z9B3?version=latest#ec0c31aa-b666-4603-8d35-900932206384">' +
+            "https://disease.sh/docs</a>",
+        },
+        xAxis: {
+          categories: this.hisDeath ? Object.keys(this.hisDeath) : [],
+          allowDecimals: false,
+          labels: {
+            formatter: function () {
+              return this.value; // clean, unformatted number for year
+            },
+          },
+        },
+        yAxis: {
+          min: Object.values(this.hisDeath).at(0),
+          title: {
+            text: "Cases(person)",
+          },
+          labels: {
+            formatter: function () {
+              return this.value / 1000 + "k";
+            },
+          },
+        },
+        tooltip: {
+          pointFormat: "{point.y:,.0f} cases",
+        },
+        plotOptions: {
+          area: {
+            marker: {
+              enabled: false,
+              symbol: "circle",
+              radius: 2,
+              states: {
+                hover: {
+                  enabled: true,
+                },
+              },
+            },
+          },
+        },
+        credits: false,
+        series: [
+          {
+            showInLegend: false,
+            data: this.hisDeath ? Object.values(this.hisDeath) : [],
+            color: "rgb(3, 171, 22)",
+          },
+        ],
+      };
+      return obj;
+    },
   },
   methods: {
     homeback() {
@@ -293,6 +577,11 @@ export default {
         credits: false,
         title: {
           text: "The condition of all cases",
+        },
+        subtitle: {
+          text:
+            'Sources: <a href="https://documenter.getpostman.com/view/11144369/Szf6Z9B3?version=latest#ec0c31aa-b666-4603-8d35-900932206384">' +
+            "https://disease.sh/docs</a>",
         },
         tooltip: {
           pointFormat: "{series.name}: <b>{point.y}</b>",
@@ -347,11 +636,16 @@ export default {
           backgroundColor: "rgb(201, 254, 250)",
           plotBorderWidth: null,
           plotShadow: false,
-          type: "column",
           height: 75 + "%",
+          type: "column",
         },
         title: {
           text: "Total And Today Infomation In The Country",
+        },
+        subtitle: {
+          text:
+            'Sources: <a href="https://documenter.getpostman.com/view/11144369/Szf6Z9B3?version=latest#ec0c31aa-b666-4603-8d35-900932206384">' +
+            "https://disease.sh/docs</a>",
         },
         xAxis: {
           categories: ["Cases", "Death", "Recovered"],
@@ -362,21 +656,39 @@ export default {
             },
           },
         },
-        yAxis: {
-          min: 0,
-          title: {
-            text: "Case (person)",
-            style: {
-              color: "black",
+        yAxis: [
+          {
+            min: 0,
+            title: {
+              text: "Total Case (person)",
+              style: {
+                color: "rgb(12, 164, 131)",
+              },
             },
-          },
-          labels: {
-            style: {
-              color: "black",
+            labels: {
+              style: {
+                color: "rgb(12, 164, 131)",
+              },
             },
+            gridLineColor: "gray",
           },
-          gridLineColor: "gray",
-        },
+          {
+            min: 0,
+            title: {
+              text: "Today Case (person)",
+              style: {
+                color: "rgb(12, 164, 88)",
+              },
+            },
+            labels: {
+              style: {
+                color: "rgb(12, 164, 88)",
+              },
+            },
+            gridLineColor: "gray",
+            opposite: true,
+          },
+        ],
         tooltip: {
           headerFormat:
             '<span style="font-size:10px">{point.key}</span><table>',
@@ -397,6 +709,7 @@ export default {
         series: [
           {
             name: "Total",
+            yAxis: 0,
             data: [
               this.$store.state.focusCountry.cases,
               this.$store.state.focusCountry.deaths,
@@ -406,6 +719,7 @@ export default {
           },
           {
             name: "Today",
+            yAxis: 1,
             data: [
               this.$store.state.focusCountry.todayCase,
               this.$store.state.focusCountry.todayDeaths,
@@ -417,7 +731,14 @@ export default {
       };
       return obj;
     },
-    
+    setHistoryDay(val) {
+      this.historyday = val;
+      this.loadingcase = true;
+    },
+    setHistoryDay1(val) {
+      this.historyday1 = val;
+      this.loadingdeath = true;
+    },
   },
   beforeCreate: async function () {
     var config = {
@@ -453,9 +774,32 @@ export default {
       };
       this.$store.commit("setFocusCountry", payload);
       this.loading = false;
+      this.$store.commit("addHistoryApp", payload.nameiso.name);
     } catch (error) {
       alert("khong ton tai nuoc nay chuyen ve trang chu");
       this.$router.push("/");
+    }
+  },
+  created: async function () {
+    var config = {
+      method: "get",
+      url:
+        "https://corona.lmao.ninja/v2/historical/" +
+        this.$route.params.country +
+        "?lastdays=7",
+      headers: {},
+    };
+    try {
+      const res = await axios(config);
+      this.hisCase = res.data.timeline.cases;
+      this.$store.commit("setHistoryCaseFocusCountry", res.data.timeline.cases);
+      this.hisDeath = res.data.timeline.deaths;
+      this.$store.commit(
+        "setHistoryDeathFocusCountry",
+        res.data.timeline.deaths
+      );
+    } catch (error) {
+      alert(error);
     }
   },
 };
@@ -469,6 +813,5 @@ export default {
     rgba(232, 241, 237, 1) 0%,
     rgba(2, 130, 157, 0.9940125708486519) 100%
   );
-  color: rgb(201, 254, 250);
 }
 </style>

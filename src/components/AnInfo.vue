@@ -29,9 +29,9 @@
         <div slot="content">
           <highcharts :options="getChartOptionsCountry()"></highcharts>
         </div>
-        <span style="color: green; font-size:17px">
+        <span style="color: green; font-size: 17px">
           <i class="fa-solid fa-angle-up"></i>
-          {{getRatio() +" %"}}
+          {{ getRatio() + " %" }}
         </span>
       </a-popover>
 
@@ -90,12 +90,12 @@ export default {
       }
       return today;
     },
-    getRatio(){
+    getRatio() {
       var his = this.historydata ? Object.values(this.historydata) : [];
-      if(his.length===2){
-        return (((this.getNew())*100)/(this.getTotal()+1)).toFixed(3)
-      }else{
-        return 0
+      if (his.length === 2) {
+        return ((this.getNew() * 100) / (this.getTotal() + 1)).toFixed(3);
+      } else {
+        return 0;
       }
     },
     getCategories() {
@@ -128,12 +128,37 @@ export default {
           categories: this.getCategories(),
           crosshair: true,
         },
-        yAxis: {
-          min: 0,
-          title: {
-            text: "Case (person)",
+        yAxis: [
+          {
+            min: 0,
+            title: {
+              text: "Case (person)",
+              style: {
+                color: "rgb(1, 119, 1)",
+              },
+            },
+            labels: {
+              style: {
+                color: "rgb(1, 119, 1)",
+              },
+            },
           },
-        },
+          {
+            min: 0,
+            title: {
+              text: "Case (person)",
+              style: {
+                color: "rgb(2, 28, 113)",
+              },
+            },
+            labels: {
+              style: {
+                color: "rgb(2, 28, 113)",
+              },
+            },
+            opposite: true,
+          },
+        ],
         tooltip: {
           headerFormat:
             '<span style="font-size:10px">{point.key}</span><table>',
@@ -154,10 +179,14 @@ export default {
         series: [
           {
             name: this.maintitle,
+            yAxis: 0,
+            color: "rgb(1, 119, 1)",
             data: this.getArrTotal(),
           },
           {
             name: this.subtitle,
+            yAxis: 1,
+            color: "rgb(2, 28, 113)",
             data: this.getArrNew(),
           },
         ],
@@ -170,7 +199,7 @@ export default {
           type: "column",
         },
         title: {
-          text: `Detail Information ${this.maintitle}`,
+          text: `Detail Vietnam Information ${this.maintitle} Increase`,
         },
         subtitle: {
           text: "Source: NovelCOVID API",
@@ -180,7 +209,7 @@ export default {
           crosshair: true,
         },
         yAxis: {
-          min: 0,
+          min: this.historydata ? Object.values(this.historydata).at(0) : 0,
           title: {
             text: "Case (person)",
           },
