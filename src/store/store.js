@@ -160,7 +160,7 @@ const store = new Vuex.Store({
         ["Vỹ độ", state.focusCountry.lat],
         ["Châu lục", state.focusCountry.continent],
         ["Số ca nhiễm", state.focusCountry.cases],
-        ["Số ca nhiễm hôm nay", state.focusCountry.todayCases],
+        ["Số ca nhiễm hôm nay", state.focusCountry.todayCase],
         ["Số ca tích cực", state.focusCountry.active],
         ["Số ca tiêu cực", state.focusCountry.critical],
         ["Số ca tử vong", state.focusCountry.deaths],
