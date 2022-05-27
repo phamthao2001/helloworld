@@ -174,7 +174,7 @@ export default {
   },
   watch: {
     $route: function (from) {
-      this.nameExport = from.params.country;
+      this.nameExport = from.params.country?from.params.country:"";
     },
   },
   computed: {
@@ -249,6 +249,7 @@ export default {
           document.querySelector("#content").clientHeight
         );
         doc.save(ex);
+        this.pdf=false;
       });
     },
     exportCSV() {
@@ -266,6 +267,7 @@ export default {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
       });
       saveAs(data, this.nameExport + ".xlsx");
+      this.csv=false;
     },
   },
   created: async function () {
