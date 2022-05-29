@@ -259,9 +259,11 @@ export default {
       );
       var ws2 = XLSX.utils.aoa_to_sheet(this.$store.getters.getHisCase);
       var ws3 = XLSX.utils.aoa_to_sheet(this.$store.getters.getHisDeath);
+      var ws4 = XLSX.utils.aoa_to_sheet(this.$store.getters.getGlobalData);
       XLSX.utils.book_append_sheet(wb, ws1, "Thông tin quốc gia");
       XLSX.utils.book_append_sheet(wb, ws2, "Lịch sử các ca nhiễm");
       XLSX.utils.book_append_sheet(wb, ws3, "Lịch sử các ca tử vong");
+      XLSX.utils.book_append_sheet(wb, ws4, "Thông tin các châu lục");
       const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
       const data = new Blob([excelBuffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",

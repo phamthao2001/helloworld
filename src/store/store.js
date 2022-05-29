@@ -191,6 +191,73 @@ const store = new Vuex.Store({
       }
       return data;
     },
+    getGlobalData(state) {
+      var data = [
+        [
+          "Tên châu lục",
+          "Số ca nhiễm",
+          "Số ca lành tính",
+          "Số ca ác tính",
+          "Số ca tử vong",
+          "Số ca hồi phục",
+          "Số trường hợp đã test",
+          "Số ca nhiễm mới",
+          "Số ca tử vong mới",
+          "Số ca hồi phục mới",
+          "Dân số",
+        ],
+      ];
+      const length = state.globalInfo.length;
+      var cases = 0,
+        active = 0,
+        critical = 0,
+        deaths = 0,
+        recovered = 0,
+        test = 0,
+        todayCases = 0,
+        todayDeaths = 0,
+        todayRecovered = 0,
+        population = 0;
+      for (var i = 0; i < length; i++) {
+        data.push([
+          state.globalInfo[i].continent,
+          state.globalInfo[i].cases,
+          state.globalInfo[i].active,
+          state.globalInfo[i].critical,
+          state.globalInfo[i].deaths,
+          state.globalInfo[i].recovered,
+          state.globalInfo[i].tests,
+          state.globalInfo[i].todayCases,
+          state.globalInfo[i].todayDeaths,
+          state.globalInfo[i].todayRecovered,
+          state.globalInfo[i].population,
+        ]);
+        cases += state.globalInfo[i].cases;
+        active += state.globalInfo[i].active;
+        critical += state.globalInfo[i].critical;
+        deaths += state.globalInfo[i].deaths;
+        recovered += state.globalInfo[i].recovered;
+        test += state.globalInfo[i].tests;
+        todayCases += state.globalInfo[i].todayCases;
+        todayDeaths += state.globalInfo[i].todayDeaths;
+        todayRecovered += state.globalInfo[i].todayRecovered;
+        population += state.globalInfo[i].population;
+      }
+      data.push([
+        "Tổng cộng",
+        cases,
+        active,
+        critical,
+        deaths,
+        recovered,
+        test,
+        todayCases,
+        todayDeaths,
+        todayRecovered,
+        population,
+      ]);
+      return data;
+    },
   },
   mutations: {
     setFocusCountry(state, payload) {
@@ -270,6 +337,7 @@ const store = new Vuex.Store({
       };
       try {
         const res = await axios(config);
+        console.log(res.data);
         commit("setGlobalInfo", res.data);
       } catch (error) {
         console.log(error);
