@@ -301,7 +301,7 @@ const store = new Vuex.Store({
       }
       var config = {
         method: "get",
-        url: "https://corona.lmao.ninja/v2/countries?yesterday&sort",
+        url: "https://disease.sh/v3/covid-19/countries?yesterday=true&sort=true",
         headers: {},
       };
       var key = 1;
@@ -332,7 +332,7 @@ const store = new Vuex.Store({
     async getGlobalInfo({ commit }) {
       var config = {
         method: "get",
-        url: "https://corona.lmao.ninja/v2/continents?yesterday&sort",
+        url: "https://disease.sh/v3/covid-19/continents?yesterday=true&sort=true",
         headers: {},
       };
       try {

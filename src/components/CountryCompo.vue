@@ -362,7 +362,7 @@ export default {
       var config = {
         method: "get",
         url:
-          "https://corona.lmao.ninja/v2/historical/" +
+          "https://disease.sh/v3/covid-19/historical/" +
           this.$route.params.country +
           "?lastdays=" +
           this.historyday,
@@ -384,7 +384,7 @@ export default {
       var config = {
         method: "get",
         url:
-          "https://corona.lmao.ninja/v2/historical/" +
+          "https://disease.sh/v3/covid-19/historical/" +
           this.$route.params.country +
           "?lastdays=" +
           this.historyday1,
@@ -744,7 +744,7 @@ export default {
     var config = {
       method: "get",
       url:
-        "https://corona.lmao.ninja/v2/countries/" +
+        "https://disease.sh/v3/covid-19/countries/" +
         this.$route.params.country +
         "?yesterday&strict&query",
       headers: {},
@@ -784,7 +784,7 @@ export default {
     var config = {
       method: "get",
       url:
-        "https://corona.lmao.ninja/v2/historical/" +
+        "https://disease.sh/v3/covid-19/historical/" +
         this.$route.params.country +
         "?lastdays=7",
       headers: {},
